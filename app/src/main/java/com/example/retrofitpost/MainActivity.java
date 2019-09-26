@@ -6,6 +6,8 @@ import android.widget.TextView;
 
 //import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.gson.JsonObject;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,83 +42,47 @@ public class MainActivity extends AppCompatActivity {
         createPost();
     }
 
-    private void getPosts() {
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("userId", "1");
-        parameters.put("_sort", "id");
-        parameters.put("_order", "desc");
 
-        Call<List<Post>> call = jsonPlaceHolderApi.getPosts(parameters);
 
-        call.enqueue(new Callback<List<Post>>() {
-            @Override
-            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
-
-                if (!response.isSuccessful()) {
-                    textViewResult.setText("Code: " + response.code());
-                    return;
-                }
-
-                List<Post> posts = response.body();
-
-                for (Post post : posts) {
-                    String content = "";
-                    content += "ID: " + post.getId() + "\n";
-                    content += "User ID: " + post.getUserId() + "\n";
-                    content += "Title: " + post.getTitle() + "\n";
-                    content += "Text: " + post.getText() + "\n\n";
-
-                    textViewResult.append(content);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Post>> call, Throwable t) {
-                textViewResult.setText(t.getMessage());
-            }
-        });
-    }
-
-    private void getComments() {
-        Call<List<Comment>> call = jsonPlaceHolderApi
-                .getComments("https://jsonplaceholder.typicode.com/posts/3/comments");
-
-        call.enqueue(new Callback<List<Comment>>() {
-            @Override
-            public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
-
-                if (!response.isSuccessful()) {
-                    textViewResult.setText("Code: " + response.code());
-                    return;
-                }
-
-                List<Comment> comments = response.body();
-
-                for (Comment comment : comments) {
-                    String content = "";
-                    content += "ID: " + comment.getId() + "\n";
-                    content += "Post ID: " + comment.getPostId() + "\n";
-                    content += "Name: " + comment.getName() + "\n";
-                    content += "Email: " + comment.getEmail() + "\n";
-                    content += "Text: " + comment.getText() + "\n\n";
-
-                    textViewResult.append(content);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Comment>> call, Throwable t) {
-                textViewResult.setText(t.getMessage());
-            }
-        });
-    }
 
     private void createPost() {
         Post post = new Post(23, "New Title", "New Text");
 
+        Map<String, String> geo = new HashMap<>();
+        geo.put("lat", "333");
+        geo.put("lng", "444");
+
+        Map<String, String> address = new HashMap<>();
+        address.put("street", "main");
+        address.put("suite", "aaaa");
+        address.put("city", "Bgr");
+        address.put("zipcode", "334455");
+        address.put("geo", geo.toString());
+        //map.put(.0F, new HashMap(){{put(.0F,0);}});
+
+
+        Map<String, String> company = new HashMap<>();
+        company.put("name", "DurgaPrasad");
+        company.put("catchPhrase", "jsksksks");
+        company.put("bs", "sssssfs");
+
+
         Map<String, String> fields = new HashMap<>();
-        fields.put("userId", "25");
-        fields.put("title", "New Title");
+        fields.put("id", "1");
+        fields.put("name", "durgaa");
+        fields.put("username", "dddddddd" );
+        fields.put("email", "durga@gmail.com");
+        fields.put("address", address.toString());
+        fields.put("phone", "48894598");
+        fields.put("website", "fskjnkjkjjkkj");
+        fields.put("company", company.toString());
+
+
+
+
+//        Map<String, String> fields = new HashMap<>();
+//        fields.put("userId", "25");
+//        fields.put("title", "New Title");
 
         Call<Post> call = jsonPlaceHolderApi.createPost(fields);
 
@@ -133,10 +99,6 @@ public class MainActivity extends AppCompatActivity {
 
                 String content = "";
                 content += "Code: " + response.code() + "\n";
-                content += "ID: " + postResponse.getId() + "\n";
-                content += "User ID: " + postResponse.getUserId() + "\n";
-                content += "Title: " + postResponse.getTitle() + "\n";
-                content += "Text: " + postResponse.getText() + "\n\n";
 
                 textViewResult.setText(content);
             }

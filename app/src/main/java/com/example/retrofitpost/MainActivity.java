@@ -1,16 +1,14 @@
 package com.example.retrofitpost;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
+
 import android.widget.TextView;
 
-//import androidx.appcompat.app.AppCompatActivity;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -21,7 +19,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity {
     private TextView textViewResult;
 
-    private JsonPlaceHolderApi jsonPlaceHolderApi;
+    private ApiInterface ApiInterfaceObject;
+    public String token = "Bearer "+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNTcxMjA4MjkyLCJleHAiOjE1NzM4MDAyOTJ9.fxBbFQ29gqQ-vPRDws0zHKIw3l0tEdB0rEfBvaJSVfs";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,15 +30,13 @@ public class MainActivity extends AppCompatActivity {
 
         textViewResult = findViewById(R.id.text_view_result);
 
+        Gson gson = new GsonBuilder().setLenient().create();
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://jsonplaceholder.typicode.com/")
-                .addConverterFactory(GsonConverterFactory.create())
+                .baseUrl("http://192.168.100.122:1337/")
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
+        ApiInterfaceObject = retrofit.create(ApiInterface.class);
 
-        jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
-
-        //getPosts();
-        //getComments();
         createPost();
     }
 
@@ -46,66 +44,36 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void createPost() {
-        Post post = new Post(23, "New Title", "New Text");
+//        PostData Posting = new PostData("testneww", "KK", "testnew@gmail.com", 2211, "asdf", "exza", true);
 
-        Map<String, String> geo = new HashMap<>();
-        geo.put("lat", "333");
-        geo.put("lng", "444");
+        JsonObject fields = new JsonObject();
+        fields.addProperty("FirstName", "Saik");
+        fields.addProperty("LastName", "Kumar");
+        fields.addProperty("email", "saik@gmail.com" );
+        fields.addProperty("phone", 98235);
+        fields.addProperty("Address", "Bangalore");
+        fields.addProperty("blacklisted", false);
+        fields.addProperty("organization", "exza");
 
-        Map<String, String> address = new HashMap<>();
-        address.put("street", "main");
-        address.put("suite", "aaaa");
-        address.put("city", "Bgr");
-        address.put("zipcode", "334455");
-        address.put("geo", geo.toString());
-        //map.put(.0F, new HashMap(){{put(.0F,0);}});
+        Call<Object> call = ApiInterfaceObject.createPost( token, fields);
 
-
-        Map<String, String> company = new HashMap<>();
-        company.put("name", "DurgaPrasad");
-        company.put("catchPhrase", "jsksksks");
-        company.put("bs", "sssssfs");
-
-
-        Map<String, String> fields = new HashMap<>();
-        fields.put("id", "1");
-        fields.put("name", "durgaa");
-        fields.put("username", "dddddddd" );
-        fields.put("email", "durga@gmail.com");
-        fields.put("address", address.toString());
-        fields.put("phone", "48894598");
-        fields.put("website", "fskjnkjkjjkkj");
-        fields.put("company", company.toString());
-
-
-
-
-//        Map<String, String> fields = new HashMap<>();
-//        fields.put("userId", "25");
-//        fields.put("title", "New Title");
-
-        Call<Post> call = jsonPlaceHolderApi.createPost(fields);
-
-        call.enqueue(new Callback<Post>() {
+        call.enqueue(new Callback<Object>() {
             @Override
-            public void onResponse(Call<Post> call, Response<Post> response) {
+            public void onResponse(Call<Object> call, Response<Object> response) {
 
                 if (!response.isSuccessful()) {
-                    textViewResult.setText("Code: " + response.code());
+                    textViewResult.setText("Success "+response.toString());
                     return;
+                }else{
+
+                    textViewResult.setText("In onResponse" + response.body());
                 }
 
-                Post postResponse = response.body();
-
-                String content = "";
-                content += "Code: " + response.code() + "\n";
-
-                textViewResult.setText(content);
             }
 
             @Override
-            public void onFailure(Call<Post> call, Throwable t) {
-                textViewResult.setText(t.getMessage());
+            public void onFailure(Call<Object> call, Throwable t) {
+                textViewResult.setText("Failure " + t.toString());
             }
         });
     }

@@ -7,11 +7,7 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -119,19 +115,29 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         ApiInterface uploadInterface = retrofitUploader.create(ApiInterface.class);
 
-        File file  = new File("/mnt/sdcard/Download/visitor4.jpg");
+        File file  = new File("/mnt/sdcard/Download/visitor1.jpg");
         Log.d("Upload", file.getAbsolutePath());
 
         RequestBody requestBody = RequestBody.create(MediaType.parse("*/*"), file);
 
         MultipartBody.Part fileToUpload = MultipartBody.Part.createFormData("files", file.getName(),
                 requestBody
+
         );
+        RequestBody ref = RequestBody.create(MediaType.parse("text/plain"), "visitor");
+        RequestBody refId = RequestBody.create(MediaType.parse("text/plain"), "160");
+        RequestBody field = RequestBody.create(MediaType.parse("text/plain"), "Photo");
+
+
+
 
         Call<Object> call_img = uploadInterface.uploadImagePost(
                 token,
-                fileToUpload
-        );
+                fileToUpload,
+                ref,
+                refId,
+                field
+                );
 
         call_img.enqueue(new Callback<Object>() {
             @Override

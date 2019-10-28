@@ -20,7 +20,10 @@ public interface ApiInterface {
     @POST("upload")
     Call<Object> uploadImagePost(
                 @Header("Authorization") String Authorization,
-                @Part MultipartBody.Part file
+                @Part MultipartBody.Part file,
+                @Part("ref") RequestBody ref,
+                @Part("refId") RequestBody refId,
+                @Part("field") RequestBody Photo
             );
     @Headers({"Content-Type: application/json;charset=Utf-8"})
     @POST("visitors")
